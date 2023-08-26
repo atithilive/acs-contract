@@ -8,41 +8,40 @@ import DialogActions from '@mui/material/DialogActions';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import {NodeInfoContext} from "../../context"
-import { createCityToken } from '../../utils/transactions/create_city_token';
+import { createUserToken } from '../../utils/transactions/create_user_token';
 import * as api from "../../api"
-
-function CreateCityDialog(props) {
-  const [data,setData]=useState({
-    name:"",
-    state:"",
-    country:"",
-    passphrase:""
-  })
-  const nodeInfo = useContext(NodeInfoContext);
-  // console.log(nodeInfo.networkIdentifier)
-  const handleChange=(event)=>{
-    event.persist();
-    setData({ ...data, [event.target.name]: event.target.value });
-  }
-  const handleSend=async (event)=>{
-      event.preventDefault();
-      // const accountId=cryptography.getAddressFromBase32Address(data.accountId)
-      const res = await createCityToken({
-          // accountId,
-          name:data.name,
-          state:data.state,
-          country:data.country,
-          passphrase:data.passphrase,
-          networkIdentifier: nodeInfo.networkIdentifier
-        });
-        // console.log(res.tx," yahan tak chala")
-        await api.sendTransactions(res.tx);
-        props.handleClose();
-  }
+function CreateGuestDialog(props) {
+    const [data,setData]=useState({
+        name:"",
+        mobile:"",
+        email:"",
+        passphrase:""
+      })
+      const nodeInfo = useContext(NodeInfoContext);
+      // console.log(nodeInfo.networkIdentifier)
+      const handleChange=(event)=>{
+        event.persist();
+        setData({ ...data, [event.target.name]: event.target.value });
+      }
+      const handleSend=async (event)=>{
+          event.preventDefault();
+          // const accountId=cryptography.getAddressFromBase32Address(data.accountId)
+          const res = await createUserToken({
+              // accountId,
+              name:data.name,
+              mobile:data.mobile,
+              email:data.email,
+              passphrase:data.passphrase,
+              networkIdentifier: nodeInfo.networkIdentifier
+            });
+            // console.log(res.tx," yahan tak chala")
+            await api.sendTransactions(res.tx);
+            props.handleClose();
+      }
   return (
     <Dialog open={props.open} onBackdropClick={props.handleClose} fullWidth >
         <DialogTitle id="alert-dialog-title">
-          {"Enter the address"}
+          {"Enter User Details"}
         </DialogTitle>
         <DialogContent >
           <form noValidate autoComplete="off"  >
@@ -57,9 +56,9 @@ function CreateCityDialog(props) {
               onChange={handleChange}
             />
             <TextField
-              label="state"
-              name="state"
-              value={data.state}
+              label="mobile"
+              name="mobile"
+              value={data.mobile}
               fullWidth
               sx={{
                 margin: 1,
@@ -67,9 +66,9 @@ function CreateCityDialog(props) {
               onChange={handleChange}
             />
             <TextField
-              label="country"
-              name="country"
-              value={data.country}
+              label="email"
+              name="email"
+              value={data.email}
               fullWidth
               sx={{
                 margin: 1,
@@ -89,11 +88,11 @@ function CreateCityDialog(props) {
             
           </form>
           <DialogActions>
-          <Button onClick={handleSend}>Create City</Button>
+          <Button onClick={handleSend}>Create User</Button>
         </DialogActions>
         </DialogContent>
       </Dialog>
   )
 }
 
-export default CreateCityDialog
+export default CreateGuestDialog

@@ -4,30 +4,25 @@ import { transactions, codec, cryptography } from "@liskhq/lisk-client";
 import { getFullAssetSchema} from "../common";
 import { fetchAccountInfo } from "../../api";
 
-export const createCityTokenSchema = {
-  $id: "lisk/create-city-asset",
+export const addManagerSchema = {
+  $id: "lisk/add-manager-asset",
   type: "object",
-  required: ["name","state", "country"],
+  required: ["managerAddress","hotelId"],
   properties: {
-    name: {
-      dataType: "string",
+    managerAddress: {
+      dataType: "bytes",
       fieldNumber: 1,
     },
-    state: {
-      dataType: "string",
+    hotelId: {
+      dataType: "bytes",
       fieldNumber: 2,
-    },
-    country: {
-      dataType: "string",
-      fieldNumber: 3,
     },
   },
 };
 
-export const createCityToken = async ({
-  name,
-  state,
-  country,
+export const AddManagerToken = async ({
+  managerAddress,
+  hotelId,
   passphrase,
   networkIdentifier,
   
@@ -41,20 +36,20 @@ export const createCityToken = async ({
   const {
     sequence: { nonce },
   } = await fetchAccountInfo(address);
-
+  const hotelIdBuffer=Buffer.from(hotelId, "hex")
+  
   const { id, ...rest } = transactions.signTransaction(
-    createCityTokenSchema,
+    addManagerSchema,
     {
       moduleID: 1024,
-      assetID: 1,
+      assetID: 0,
       nonce: BigInt(nonce),
       fee: BigInt(transactions.convertLSKToBeddows("113001")),
       senderPublicKey: publicKey,
       asset: {
         // account:cryptography.getAddressFromBase32Address(address),
-        name,
-        state,
-        country,
+        managerAddress,
+        hotelId:hotelIdBuffer,
       },
     },
     Buffer.from(networkIdentifier, "hex"),
@@ -63,7 +58,7 @@ export const createCityToken = async ({
   
   return {
     id: id.toString("hex"),
-    tx: codec.codec.toJSON(getFullAssetSchema(createCityTokenSchema), rest),
+    tx: codec.codec.toJSON(getFullAssetSchema(addManagerSchema), rest),
     time:new Date()
   };
 };

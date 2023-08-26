@@ -8,14 +8,14 @@ import DialogActions from '@mui/material/DialogActions';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import {NodeInfoContext} from "../../context"
-import { createCityToken } from '../../utils/transactions/create_city_token';
+import { createHotelToken } from '../../utils/transactions/create_hotel_token';
 import * as api from "../../api"
 
-function CreateCityDialog(props) {
+function CreateHotelDialog(props) {
   const [data,setData]=useState({
     name:"",
-    state:"",
-    country:"",
+    cityId:"",
+    location:"",
     passphrase:""
   })
   const nodeInfo = useContext(NodeInfoContext);
@@ -27,11 +27,11 @@ function CreateCityDialog(props) {
   const handleSend=async (event)=>{
       event.preventDefault();
       // const accountId=cryptography.getAddressFromBase32Address(data.accountId)
-      const res = await createCityToken({
+      const res = await createHotelToken({
           // accountId,
           name:data.name,
-          state:data.state,
-          country:data.country,
+          cityId:data.cityId,
+          location:data.location,
           passphrase:data.passphrase,
           networkIdentifier: nodeInfo.networkIdentifier
         });
@@ -42,7 +42,7 @@ function CreateCityDialog(props) {
   return (
     <Dialog open={props.open} onBackdropClick={props.handleClose} fullWidth >
         <DialogTitle id="alert-dialog-title">
-          {"Enter the address"}
+          {"Enter Hotel Details"}
         </DialogTitle>
         <DialogContent >
           <form noValidate autoComplete="off"  >
@@ -57,9 +57,9 @@ function CreateCityDialog(props) {
               onChange={handleChange}
             />
             <TextField
-              label="state"
-              name="state"
-              value={data.state}
+              label="cityId"
+              name="cityId"
+              value={data.cityId}
               fullWidth
               sx={{
                 margin: 1,
@@ -67,9 +67,9 @@ function CreateCityDialog(props) {
               onChange={handleChange}
             />
             <TextField
-              label="country"
-              name="country"
-              value={data.country}
+              label="location"
+              name="location"
+              value={data.location}
               fullWidth
               sx={{
                 margin: 1,
@@ -89,11 +89,11 @@ function CreateCityDialog(props) {
             
           </form>
           <DialogActions>
-          <Button onClick={handleSend}>Create City</Button>
+          <Button onClick={handleSend}>Create Hotel</Button>
         </DialogActions>
         </DialogContent>
       </Dialog>
   )
 }
 
-export default CreateCityDialog
+export default CreateHotelDialog

@@ -44,8 +44,8 @@ export const baseAssetSchema = {
 
 export const getFullAssetSchema = assetSchema => objects.mergeDeep({}, baseAssetSchema, { properties: { asset: assetSchema }, });
 
-// export const calcMinTxFee = (assetSchema, minFeePerByte, tx) => {
-// 	const assetBytes = codec.encode(assetSchema, tx.asset);
-// 	const bytes = codec.encode(baseAssetSchema, { ...tx, asset: assetBytes });
-// 	return BigInt(bytes.length * minFeePerByte);
-// };
+export const calcMinTxFee = (assetSchema, minFeePerByte, tx) => {
+	const assetBytes = codec.encode(assetSchema, tx.asset);
+	const bytes = codec.encode(baseAssetSchema, { ...tx, asset: assetBytes });
+	return BigInt(bytes.length * minFeePerByte);
+};

@@ -4,30 +4,30 @@ import { transactions, codec, cryptography } from "@liskhq/lisk-client";
 import { getFullAssetSchema} from "../common";
 import { fetchAccountInfo } from "../../api";
 
-export const createCityTokenSchema = {
-  $id: "lisk/create-city-asset",
+export const createHotelTokenSchema = {
+  $id: "lisk/create-hotel-asset",
   type: "object",
-  required: ["name","state", "country"],
+  required: ["name","cityId", "location"],
   properties: {
     name: {
       dataType: "string",
       fieldNumber: 1,
     },
-    state: {
-      dataType: "string",
+    cityId: {
+      dataType: "bytes",
       fieldNumber: 2,
     },
-    country: {
+    location: {
       dataType: "string",
       fieldNumber: 3,
     },
   },
 };
 
-export const createCityToken = async ({
+export const createHotelToken = async ({
   name,
-  state,
-  country,
+  cityId,
+  location,
   passphrase,
   networkIdentifier,
   
@@ -37,24 +37,25 @@ export const createCityToken = async ({
   );
   // const addressId = cryptography.getAddressFromPassphrase(passphrase);
   const address = cryptography.getAddressFromPassphrase(passphrase).toString("hex");
+  const cityIdBuffer=Buffer.from(cityId, "hex")
 
   const {
     sequence: { nonce },
   } = await fetchAccountInfo(address);
 
   const { id, ...rest } = transactions.signTransaction(
-    createCityTokenSchema,
+    createHotelTokenSchema,
     {
       moduleID: 1024,
-      assetID: 1,
+      assetID: 2,
       nonce: BigInt(nonce),
       fee: BigInt(transactions.convertLSKToBeddows("113001")),
       senderPublicKey: publicKey,
       asset: {
         // account:cryptography.getAddressFromBase32Address(address),
         name,
-        state,
-        country,
+        cityId:cityIdBuffer,
+        location,
       },
     },
     Buffer.from(networkIdentifier, "hex"),
@@ -63,7 +64,7 @@ export const createCityToken = async ({
   
   return {
     id: id.toString("hex"),
-    tx: codec.codec.toJSON(getFullAssetSchema(createCityTokenSchema), rest),
+    tx: codec.codec.toJSON(getFullAssetSchema(createHotelTokenSchema), rest),
     time:new Date()
   };
 };

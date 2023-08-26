@@ -4,30 +4,30 @@ import { transactions, codec, cryptography } from "@liskhq/lisk-client";
 import { getFullAssetSchema} from "../common";
 import { fetchAccountInfo } from "../../api";
 
-export const createCityTokenSchema = {
-  $id: "lisk/create-city-asset",
+export const createUserTokenSchema = {
+  $id: "lisk/create-user-asset",
   type: "object",
-  required: ["name","state", "country"],
+  required: ["name","mobileNumber", "email"],
   properties: {
     name: {
       dataType: "string",
       fieldNumber: 1,
     },
-    state: {
+    mobileNumber: {
       dataType: "string",
       fieldNumber: 2,
     },
-    country: {
+    email: {
       dataType: "string",
       fieldNumber: 3,
     },
   },
 };
 
-export const createCityToken = async ({
+export const createUserToken = async ({
   name,
-  state,
-  country,
+  mobile,
+  email,
   passphrase,
   networkIdentifier,
   
@@ -43,18 +43,19 @@ export const createCityToken = async ({
   } = await fetchAccountInfo(address);
 
   const { id, ...rest } = transactions.signTransaction(
-    createCityTokenSchema,
+    createUserTokenSchema,
     {
       moduleID: 1024,
-      assetID: 1,
+      assetID: 6,
       nonce: BigInt(nonce),
+
       fee: BigInt(transactions.convertLSKToBeddows("113001")),
       senderPublicKey: publicKey,
       asset: {
         // account:cryptography.getAddressFromBase32Address(address),
         name,
-        state,
-        country,
+        mobileNumber:mobile,
+        email,
       },
     },
     Buffer.from(networkIdentifier, "hex"),
@@ -63,7 +64,7 @@ export const createCityToken = async ({
   
   return {
     id: id.toString("hex"),
-    tx: codec.codec.toJSON(getFullAssetSchema(createCityTokenSchema), rest),
+    tx: codec.codec.toJSON(getFullAssetSchema(createUserTokenSchema), rest),
     time:new Date()
   };
 };

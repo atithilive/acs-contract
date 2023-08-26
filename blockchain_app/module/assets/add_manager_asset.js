@@ -28,7 +28,7 @@ class AddManagerAsset extends BaseAsset {
         hotels[hotelIndex]=hotel
         allTokens.hotels=hotels
         await setAllTokens(stateStore,allTokens)
-        managerAccount.atithi.asManager.hotels.push(asset.hotelId)
+        managerAccount.atithi.generalDetails.hotelId=asset.hotelId
         await stateStore.account.set(asset.managerAddress,managerAccount)
 
     }

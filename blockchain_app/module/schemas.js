@@ -15,7 +15,7 @@ const addManagerAssetSchema = {
             dataType: "bytes",
             fieldNumber: 1,
         },
-        hotelAddress: {
+        hotelId: {
             dataType: "bytes",
             fieldNumber: 2,
         },

@@ -9,6 +9,7 @@ const RemoveManagerAsset=require("./assets/remove_manager_asset")
 const RemoveSuperAdminAsset=require("./assets/remove_superadmin_asset")
 const UserCheckInAsset=require("./assets/user_check_in_asset")
 const UserCheckOutAsset=require("./assets/user_check_out_asset")
+const {getAllTokensAsJSON}=require("./atithi")
 class AtithiModule extends BaseModule {
     name='atithi'
     id=1024

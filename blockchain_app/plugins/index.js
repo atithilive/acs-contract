@@ -49,12 +49,12 @@ class AtithiAPIPlugin extends BasePlugin {
     this._app.get("/api/atithi_hotels_tokens", async (_req, res) => {
       const nftTokens = await this._channel.invoke("atithi:getAllTokens");
       const {hotels,...rest}=nftTokens
-      let data;
+      let data={};
       for(let i=0;i<hotels.length;i++){
         if (data[hotels[i].cityId]){
-          data[[hotels[i].cityId]].push({"id":hotels[i].id,"name":hotels[i].name,"location":hotels[i].location})
+          data[[hotels[i].cityId]].push({"id":hotels[i].id,"name":hotels[i].name,"location":hotels[i].location,"managers":hotels[i].managers,"users":hotels[i].users})
         }else{
-          data[[hotels[i].cityId]]=[{"id":hotels[i].id,"name":hotels[i].name,"location":hotels[i].location}]
+          data[[hotels[i].cityId]]=[{"id":hotels[i].id,"name":hotels[i].name,"location":hotels[i].location,"managers":hotels[i].managers,"users":hotels[i].users}]
         }
       }
       res.json({ data });
@@ -64,8 +64,18 @@ class AtithiAPIPlugin extends BasePlugin {
         const nftTokens = await this._channel.invoke("atithi:getAllTokens");
         const {cities,...rest}=nftTokens
         let data=[]
-        for(let i=0;i<cities.length;i++){
-          data.push({"id":cities[i].id,"name":cities[i].name,"state":cities[i].state,"country":cities[i].country})
+        // for(let i=0;i<cities.length;i++){
+        //   data.push({"id":cities[i].id,"name":cities[i].name,"state":cities[i].state,"country":cities[i].country})
+        // }
+        if (Array.isArray(cities)) {
+          for (let i = 0; i < cities.length; i++) {
+            data.push({
+              "id": cities[i].id,
+              "name": cities[i].name,
+              "state": cities[i].state,
+              "country": cities[i].country
+            });
+          }
         }
         res.json({ data });
       });
@@ -73,7 +83,21 @@ class AtithiAPIPlugin extends BasePlugin {
     this._app.get("/api/atithi_users_tokens", async (_req, res) => {
         const nftTokens = await this._channel.invoke("atithi:getAllTokens");
         const {users,...rest}=nftTokens  
-        res.json({ users });
+        let data=[]
+        if (Array.isArray(users)) {
+          for (let i = 0; i < users.length; i++) {
+            data.push({
+              "awn": users[i].awn,
+              "name": users[i].name,
+              "mobileNumber": users[i].mobileNumber,
+              "email": users[i].email,
+              "status": users[i].status,
+              "hotelId": users[i].hotelId,
+              "isVerified": users[i].isVerified,
+            });
+          }
+        }
+        res.json({ data });
       });
 
     this._app.get("/api/atithi_cities_tokens/:id", async (req, res) => {
@@ -142,7 +166,7 @@ class AtithiAPIPlugin extends BasePlugin {
         await saveTransactions(this._db, payload);
         const decodedBlock = this.codec.decodeBlock(block);
         // save NFT transaction history
-        await saveNFTHistory(this._db, decodedBlock, this._nodeInfo.registeredModules, this._channel);
+        // await saveNFTHistory(this._db, decodedBlock, this._nodeInfo.registeredModules, this._channel);
       }
     });
   }

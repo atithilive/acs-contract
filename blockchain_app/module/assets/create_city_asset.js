@@ -1,6 +1,11 @@
 const { BaseAsset } = require("lisk-sdk");
 const {createCityAssetSchema}=require("../schemas")
 const {getAllTokens,setAllTokens,createCityToken}=require("../atithi")
+
+
+function isEmptyObject(obj) {
+    return Object.keys(obj).length === 0;
+}
 // extend base asset to implement your custom asset
 class CreateCityAsset extends BaseAsset { 
     name = "createCity";
@@ -8,10 +13,11 @@ class CreateCityAsset extends BaseAsset {
     schema = createCityAssetSchema
 
     async apply({ asset, stateStore, reducerHandler, transaction }){
+        // console.log(asset,"backend se asset")
         const senderAddress = transaction.senderAddress;
         const senderAccount = await stateStore.account.get(senderAddress);
 
-        const allTokens=getAllTokens(stateStore)
+        const allTokens=await getAllTokens(stateStore)
         if (!senderAccount.atithi.superAdmin){
             throw new Error("Not authorised to add city");
         }
@@ -21,7 +27,15 @@ class CreateCityAsset extends BaseAsset {
             country:asset.country,
             nonce:transaction.nonce
         })
-        allTokens.cities.push(city)
+        if (isEmptyObject(allTokens)) {
+            allTokens["cities"]=[city]
+        }else{
+            const c=allTokens.cities
+            c.push(city)
+            allTokens.cities=c
+        }
+        
+        
         await setAllTokens(stateStore,allTokens)
         
     }

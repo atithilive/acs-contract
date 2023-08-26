@@ -40,14 +40,15 @@ const registeredTokensSchema = {
     properties: {
         registeredAtithiTokens: {
             type: "object",
-            required: ["cities", "hotels","users"],
+            fieldNumber:1,
+            // required: ["cities", "hotels","users"],
             properties: {
                 cities: {
                     type: "array",
                     fieldNumber: 1,
                     items: {
                         type: "object",
-                        required: ["id", "name", "state", "country", "hotelIds"],
+                        // required: ["id", "name", "state", "country", "hotelIds"],
                         properties: {
                             id: {
                                 dataType: "bytes",
@@ -80,7 +81,7 @@ const registeredTokensSchema = {
                     fieldNumber: 2,
                     items: {
                         type: "object",
-                        required: ["id", "name", "managers", "cityId", "location","users"],
+                        // required: ["id", "name", "managers", "cityId", "location","users"],
                         properties: {
                             id: {
                                 dataType: "bytes",
@@ -120,7 +121,7 @@ const registeredTokensSchema = {
                     fieldNumber: 3,
                     items: {
                         type: "object",
-                        required: ["awn", "name", "email", "mobileNumber", "status","hotelId","isVerified"],
+                        // required: ["awn", "name", "email", "mobileNumber", "status","hotelId","isVerified"],
                         properties: {
                             awn: {
                                 dataType: "string",
@@ -131,11 +132,11 @@ const registeredTokensSchema = {
                                 fieldNumber: 2,
                             },
                             email: {
-                                datatype: "string",
+                                dataType: "string",
                                 fieldNumber: 3,
                             },
                             mobileNumber: {
-                                dataType: "uint32",
+                                dataType: "string",
                                 fieldNumber: 4,
                             },
                             status: {
@@ -166,7 +167,10 @@ const createCityToken = ({ nonce,name, state,country }) => {
     const nonceBuffer = Buffer.alloc(8);
     nonceBuffer.writeBigInt64LE(nonce);
     // Create a unique seed by using a combination of the owner account address and the current nonce of the account.
-    const seed = Buffer.concat([name,state,country, nonceBuffer]);
+    const nameBuffer = Buffer.from(name, "utf-8");
+    const stateBuffer = Buffer.from(state, "utf-8");
+    const countryBuffer = Buffer.from(country, "utf-8");
+    const seed = Buffer.concat([nameBuffer,stateBuffer,countryBuffer, nonceBuffer]);
     const id = cryptography.hash(seed);
   
     return {
@@ -183,8 +187,10 @@ const createCityToken = ({ nonce,name, state,country }) => {
 const createHotelToken = ({ name, cityId, nonce, location }) => {
     const nonceBuffer = Buffer.alloc(8);
     nonceBuffer.writeBigInt64LE(nonce);
+    const nameBuffer = Buffer.from(name, "utf-8");
+    const locationBuffer = Buffer.from(location, "utf-8");
     // Create a unique seed by using a combination of the owner account address and the current nonce of the account.
-    const seed = Buffer.concat([cityId,name,location, nonceBuffer]);
+    const seed = Buffer.concat([cityId,nameBuffer,locationBuffer, nonceBuffer]);
     const id = cryptography.hash(seed);
   
     return {
@@ -201,7 +207,10 @@ const createUserToken = ({ name, email, nonce, mobileNumber }) => {
     const nonceBuffer = Buffer.alloc(8);
     nonceBuffer.writeBigInt64LE(nonce);
     // Create a unique seed by using a combination of the owner account address and the current nonce of the account.
-    const seed = Buffer.concat([email,name,mobileNumber, nonceBuffer]);
+    const nameBuffer = Buffer.from(name, "utf-8");
+    const emailBuffer = Buffer.from(email, "utf-8");
+    const mobileNumberBuffer = Buffer.from(mobileNumber, "utf-8");
+    const seed = Buffer.concat([emailBuffer,nameBuffer,mobileNumberBuffer, nonceBuffer]);
     const id = cryptography.hash(seed);
   
     return {
@@ -250,9 +259,35 @@ const getAllTokens = async (stateStore) => {
   };
   
   const setAllTokens = async (stateStore, atithiTokens) => {
-    const sortedCities = atithiTokens.cities.sort((a, b) => a.id.compare(b.id));
-    const sortedHotels = atithiTokens.hotels.sort((a, b) => a.id.compare(b.id));
-    const sortedUsers = atithiTokens.userss.sort((a, b) => a.id.compare(b.id));
+    
+    // const sortedCities = atithiTokens.cities.sort((a, b) => a.id.compare(b.id));
+    // const sortedHotels = atithiTokens.hotels.sort((a, b) => a.id.compare(b.id));
+    // const sortedUsers = atithiTokens.users.sort((a, b) => a.id.compare(b.id));
+    let sortedCities,sortedHotels,sortedUsers
+    if (atithiTokens.hasOwnProperty("cities")) {
+        // console.log("cities key exists.");
+        sortedCities = atithiTokens.cities.sort((a, b) => a.id.compare(b.id));
+      } else {
+        // console.log("cities key is missing.");
+        sortedCities=[]
+      }
+      
+      if (atithiTokens.hasOwnProperty("users")) {
+        // console.log("users key exists.");
+        sortedUsers = atithiTokens.users.sort((a, b) => a.awn.localeCompare(b.awn));
+        
+      } else {
+        // console.log("users key is missing.");
+        sortedUsers=[]
+      }
+      
+      if (atithiTokens.hasOwnProperty("hotels")) {
+        // console.log("hotels key exists.");
+        sortedHotels = atithiTokens.hotels.sort((a, b) => a.id.compare(b.id));
+      } else {
+        // console.log("hotels key is missing.");
+        sortedHotels=[]
+      }
     const registeredTokens = {
       registeredAtithiTokens: {
         cities: sortedCities,
@@ -260,7 +295,9 @@ const getAllTokens = async (stateStore) => {
         users: sortedUsers,
       }
     };
-  
+    
+    // console.log(registeredTokens)
+    // console.log(sortedCities)
     await stateStore.chain.set(
         CHAIN_STATE_ATITHI_TOKENS,
       codec.encode(registeredTokensSchema, registeredTokens)

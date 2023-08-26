@@ -6,16 +6,26 @@ import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
 import LocationCityIcon from '@mui/icons-material/LocationCity';
+import HotelIcon from '@mui/icons-material/Hotel';
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import {NodeInfoContext, nodeInfoContextDefaultValue } from "./context"
 import CreateAccountDialog from "./components/dialogs/CreateAccountDialog";
 import CreateCityDialog from "./components/dialogs/CreateCityDialog";
 import CreateSuperAdminDialog from "./components/dialogs/CreateSuperAdminDialog";
+import CreateHotelDialog from "./components/dialogs/CreateHotelDialog";
+import CreateGuestDialog from "./components/dialogs/CreateGuestDialog";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Hotels from "./components/Hotels"
+import CityHotel from "./components/CityHotel"
 import * as api from "./api"
 import User from "./components/User";
 import Cities from "./components/Cities";
+import PersonIcon from '@mui/icons-material/Person';
+import LocalAtmIcon from '@mui/icons-material/LocalAtm';
+import GuestUser from "./components/GuestUser";
+import TransferFundsDialog from "./components/dialogs/TransferFundsDialog";
+import UserCheckIn from "./components/UserCheckIn";
 function App(){
 
   const [openSpeedDial, setOpenSpeedDial] = useState(false);
@@ -57,15 +67,19 @@ function App(){
     <Navbar/>
     <Routes>
         <Route exact path="/" element={ <Home/> } />
-        <Route path="/user" element={ <User/> } />
+        <Route path="/account" element={ <User/> } />
         <Route path="/cities" element={ <Cities/> } />
+        <Route path="/hotels" element={ <Hotels/> } />
+        <Route path="/cityHotel/:cityId" element={ <CityHotel/> } />
+        <Route path="/guestUser" element={ <GuestUser/> } />
+        <Route path="/guest/checkin" element={ <UserCheckIn/> } />
         {/* <Route path="/contact" element={ <Contact/> } /> */}
       </Routes>
     
     <Box sx={{ height: 320, transform: 'translateZ(0px)', flexGrow: 1 }}>
       <SpeedDial
         ariaLabel="SpeedDial basic example"
-        sx={{ position: 'absolute', bottom: 16, right: 16 }}
+        sx={{ position: 'absolute', bottom: -200, right: 16 }}
         icon={<SpeedDialIcon />}
         onClose={handleSpeedDialClose}
 				onOpen={handleSpeedDialOpen}
@@ -99,6 +113,33 @@ function App(){
 								setOpenDialog('CreateAccount');
 							}}
 						/>
+			<SpeedDialAction
+							key={'Create Hotel'}
+							icon={<HotelIcon />}
+							tooltipTitle={'Create Hotel'}
+							onClick={() => {
+								setOpenSpeedDial(false);
+								setOpenDialog('CreateHotel');
+							}}
+						/>
+			<SpeedDialAction
+							key={'Create User'}
+							icon={<PersonIcon />}
+							tooltipTitle={'Add guest'}
+							onClick={() => {
+								setOpenSpeedDial(false);
+								setOpenDialog('CreateUser');
+							}}
+						/>
+			<SpeedDialAction
+							key={'Transfer'}
+							icon={<LocalAtmIcon />}
+							tooltipTitle={'Transfer Funds'}
+							onClick={() => {
+								setOpenSpeedDial(false);
+								setOpenDialog('TransferFundsDialog');
+							}}
+						/>
       </SpeedDial>
       <CreateCityDialog
 						open={openDialog === 'CreateCityTokenDialog'}
@@ -120,6 +161,25 @@ function App(){
 							setOpenDialog(null);
 						}}
 					/>
+					<CreateHotelDialog
+						open={openDialog === 'CreateHotel'}
+						handleClose={() => {
+							setOpenDialog(null);
+						}}
+					/>
+					<CreateGuestDialog
+						open={openDialog === 'CreateUser'}
+						handleClose={() => {
+							setOpenDialog(null);
+						}}
+					/>
+					<TransferFundsDialog
+						open={openDialog === 'TransferFundsDialog'}
+						handleClose={() => {
+							setOpenDialog(null);
+						}}
+					/>
+					
     </Box>
     </BrowserRouter>
     </NodeInfoContext.Provider>

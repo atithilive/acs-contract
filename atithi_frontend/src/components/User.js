@@ -31,10 +31,18 @@ function User() {
         const binaryAddress = cryptography.getAddressFromBase32Address(address).toString('hex')
         await axios.get(`http://127.0.0.1:4000/api/accounts/${binaryAddress}`)
         .then(res=>{
+          try {
             setAccount(res.data);
             setOpen(true)
+          } catch (error) {
+            setAccount({"response":"No account was found"});
+            setOpen(true)
+          }
+            
         }).catch(err=>{
             console.log(err.response.data)
+            setAccount(err.response.data);
+            setOpen(true)
         })
     }
     return (<>

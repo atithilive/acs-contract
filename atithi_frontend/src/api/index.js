@@ -1,12 +1,14 @@
 import axios from "axios";
+const url1="http://localhost:4000"
+const url2="http://localhost:8080"
 export const fetchNodeInfo = async () => {
-    return fetch("http://localhost:4000/api/node/info")
+    return fetch(`${url1}/api/node/info`)
       .then((res) => res.json())
       .then((res) => res.data);
   };
 
 export const fetchAccountInfo = async (address) => {
-    return fetch(`http://127.0.0.1:4000/api/accounts/${address}`)
+    return fetch(`${url1}/api/accounts/${address}`)
       .then((res) => res.json())
       .then((res) => res.data);
   };
@@ -22,7 +24,7 @@ export const sendTransactions = async (tx) => {
     //   .then((res) => res.json())
     //   .then((res) => res.data);
     try {
-      const response = await axios.post("http://localhost:4000/api/transactions", tx, {
+      const response = await axios.post(`${url1}/api/transactions`, tx, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -37,7 +39,7 @@ export const sendTransactions = async (tx) => {
   };
 
 export const getUserTokens =async()=>{
-    return fetch(`http://localhost:8080/api/atithi_users_tokens`)
+    return fetch(`${url2}/api/atithi_users_tokens`)
     .then((res) => res.json())
     .then((res) => {
       return res.data;
@@ -45,14 +47,14 @@ export const getUserTokens =async()=>{
 }
 
 export const getHotelsTokens =async()=>{
-    return fetch(`http://localhost:8080/api/atithi_hotels_tokens`)
+    return fetch(`${url2}/api/atithi_hotels_tokens`)
     .then((res) => res.json())
     .then((res) => {
       return res.data;
     });
 }
 export const getCitiesTokens =async()=>{
-    return fetch(`http://localhost:8080/api/atithi_cities_tokens`)
+    return fetch(`${url2}/api/atithi_cities_tokens`)
     .then((res) => res.json())
     .then((res) => {
       return res.data;

@@ -7,7 +7,7 @@ import { fetchAccountInfo } from '../api';
 import axios from 'axios'
 import "./css/user.css"
 import { cryptography } from "@liskhq/lisk-client";
-
+import {url1} from "../api"
 
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -29,7 +29,7 @@ function User() {
 
     const handleSubmit=async ()=>{
         const binaryAddress = cryptography.getAddressFromBase32Address(address).toString('hex')
-        await axios.get(`http://127.0.0.1:4000/api/accounts/${binaryAddress}`)
+        await axios.get(`${url1}/api/accounts/${binaryAddress}`)
         .then(res=>{
           try {
             setAccount(res.data);

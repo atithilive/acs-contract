@@ -1,8 +1,8 @@
 import axios from "axios";
-// const url1="http://localhost:4000"
-const url1="https://backend-umyd.onrender.com:4000"
-// const url2="http://localhost:8080"
-const url2="https://backend-umyd.onrender.com:8080"
+export const url1="http://localhost:4000"
+//export const url1="https://34.229.39.151:4000"
+const url2="http://localhost:8080"
+// const url2="https://34.229.39.151:8080"
 export const fetchNodeInfo = async () => {
     return fetch(`${url1}/api/node/info`)
       .then((res) => res.json())

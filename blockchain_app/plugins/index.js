@@ -50,6 +50,7 @@ class AtithiAPIPlugin extends BasePlugin {
       const nftTokens = await this._channel.invoke("atithi:getAllTokens");
       const {hotels,...rest}=nftTokens
       let data={};
+      if (Array.isArray(hotels)) {
       for(let i=0;i<hotels.length;i++){
         if (data[hotels[i].cityId]){
           data[[hotels[i].cityId]].push({"id":hotels[i].id,"name":hotels[i].name,"location":hotels[i].location,"managers":hotels[i].managers,"users":hotels[i].users})
@@ -57,6 +58,7 @@ class AtithiAPIPlugin extends BasePlugin {
           data[[hotels[i].cityId]]=[{"id":hotels[i].id,"name":hotels[i].name,"location":hotels[i].location,"managers":hotels[i].managers,"users":hotels[i].users}]
         }
       }
+    }
       res.json({ data });
     });
 

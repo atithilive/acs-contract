@@ -11,13 +11,14 @@ import { FileCopy as FileCopyIcon } from '@mui/icons-material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import AddManagerToHotel from './dialogs/AddManagerToHotel';
-
+import RemoveManagerFromHotel from './dialogs/RemoveManagerFromHotel';
 
 function CityHotel() {
     const {cityId}=useParams()
     const [hotelTokens, setHotelTokens] = useState([])
     const [hotelId, setHotelId] = useState()
     const [isDialogOpen, setDialogOpen] = useState(false);
+    const [isDialogOpenRemove, setDialogOpenRemove] = useState(false);
 
     const handleCopyClick = (id) => {
       // Copy the id to the clipboard
@@ -48,9 +49,18 @@ function CityHotel() {
     console.log(e)
   }
 
-  const handleManagerToggle=(e)=>{
-    setDialogOpen(true);
-    setHotelId(e)
+  const handleManagerToggle=(e,managerId)=>{
+    console.log(e)
+    console.log(managerId)
+    if (managerId == null){
+      setDialogOpen(true);
+      setHotelId(e)
+    }
+    else{
+      setDialogOpenRemove(true)
+      setHotelId(e)
+    }
+    
   }
   return (
    
@@ -102,10 +112,10 @@ hotelTokens[cityId].map((item)=>{
         Manager - {item.managers?item.managers[0]:"None"}
       </Typography>
       <IconButton
-    color={item.managerId ? 'red' : 'green'}
-    onClick={() => handleManagerToggle(item.id)}
+    // color={item.managers[0] ? 'red' : 'green'}
+    onClick={() => item.managers[0]?handleManagerToggle(item.id,item.managers[0]):handleManagerToggle(item.id,null)}
   >
-    {item.managerId ? <RemoveCircleOutlineIcon  /> : <AddCircleOutlineIcon />}
+    {item.managers[0] ? <RemoveCircleOutlineIcon style={{ color: 'red' }} /> : <AddCircleOutlineIcon style={{ color: 'green' }} />}
   </IconButton>
   </div>
       <Button onClick={()=>handleTableRowClick(item.id)}>
@@ -134,6 +144,12 @@ hotelTokens[cityId].map((item)=>{
 <AddManagerToHotel open={isDialogOpen}
 						handleClose={() => {
 							setDialogOpen(null);
+						}}
+            hotelId={hotelId}/>
+
+<RemoveManagerFromHotel open={isDialogOpenRemove}
+						handleClose={() => {
+							setDialogOpenRemove(null);
 						}}
             hotelId={hotelId}/>
 </div>

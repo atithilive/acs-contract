@@ -11,8 +11,9 @@ import DialogActions from '@mui/material/DialogActions';
 import "../css/user.css"
 import { NodeInfoContext } from '../../context';
 import * as api from "../../api"
-import { AddManagerToken } from '../../utils/transactions/addManager';
-function AddManagerToHotel(props) {
+// import { AddManagerToken } from '../../utils/transactions/addManager';
+import {RemoveManagerToken} from '../../utils/transactions/removeManager';
+function RemoveManagerFromHotel(props) {
     const [data,setData]=useState({
         managerAddress:"",
         hotelId:"",
@@ -33,7 +34,7 @@ function AddManagerToHotel(props) {
         event.preventDefault();
       // const accountId=cryptography.getAddressFromBase32Address(data.accountId)
       const accountId=cryptography.getAddressFromBase32Address(data.managerAddress)
-      const res = await AddManagerToken({
+      const res = await RemoveManagerToken({
         managerAddress:accountId,
         hotelId:data.hotelId,
           passphrase:data.passphrase,
@@ -84,11 +85,11 @@ function AddManagerToHotel(props) {
             />
           </form>
           <DialogActions>
-          <Button onClick={handleSend}>Add Manager</Button>
+          <Button onClick={handleSend}>Remove Manager</Button>
         </DialogActions>
         </DialogContent>
       </Dialog>
   )
 }
 
-export default AddManagerToHotel
+export default RemoveManagerFromHotel

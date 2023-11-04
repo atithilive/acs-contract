@@ -79,7 +79,7 @@ const removeManagerAssetSchema = {
 }
 
 const addUserAssetSchema = {
-    $id: "atithi-v1/atithi/removeManager",
+    $id: "atithi-v1/atithi/addUser",
     type: "object",
     required: ["name", "mobileNumber", "email"],
     properties: {

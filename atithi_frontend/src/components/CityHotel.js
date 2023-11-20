@@ -12,6 +12,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import AddManagerToHotel from './dialogs/AddManagerToHotel';
 import RemoveManagerFromHotel from './dialogs/RemoveManagerFromHotel';
+import { useNavigate } from 'react-router-dom';
 
 function CityHotel() {
     const {cityId}=useParams()
@@ -19,6 +20,7 @@ function CityHotel() {
     const [hotelId, setHotelId] = useState()
     const [isDialogOpen, setDialogOpen] = useState(false);
     const [isDialogOpenRemove, setDialogOpenRemove] = useState(false);
+    const navigate=useNavigate()
 
     const handleCopyClick = (id) => {
       // Copy the id to the clipboard
@@ -35,6 +37,7 @@ function CityHotel() {
           }
         }
         fetchData();
+        console.log(hotelTokens)
       }, []);
       if (hotelTokens.length === 0) {
         return <div>Loading...</div>;
@@ -45,13 +48,13 @@ function CityHotel() {
         hotelTokens[cityId] = [];
       }   
 
-  const handleTableRowClick=(e)=>{
-    console.log(e)
+  const handleTableRowClick=(hotelId,user)=>{
+    navigate(`/cityHotel/${cityId}/${hotelId}`)
   }
 
   const handleManagerToggle=(e,managerId)=>{
-    console.log(e)
-    console.log(managerId)
+    // console.log(e)
+    // console.log(managerId)
     if (managerId == null){
       setDialogOpen(true);
       setHotelId(e)
@@ -118,7 +121,8 @@ hotelTokens[cityId].map((item)=>{
     {item.managers[0] ? <RemoveCircleOutlineIcon style={{ color: 'red' }} /> : <AddCircleOutlineIcon style={{ color: 'green' }} />}
   </IconButton>
   </div>
-      <Button onClick={()=>handleTableRowClick(item.id)}>
+      {/* <Button onClick={()=>handleTableRowClick(item.id,item.users)}> */}
+      <Button onClick={()=>navigate(`/cityHotel/${cityId}/${item.id}`, { state: { 'users': [item.id] } })}>
         Show More
       </Button>
     </CardContent>

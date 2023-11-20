@@ -4,6 +4,19 @@ const { BasePlugin, codec } = require("lisk-sdk");
 const pJSON = require("../package.json");
 const { getDBInstance, getNFTHistory, getAllTransactions, saveNFTHistory, saveTransactions,saveUserHistory } = require("./db");
 
+function compareByteArrays(arr1, arr2) {
+  if (arr1.length !== arr2.length) {
+      return false;
+  }
+
+  for (let i = 0; i < arr1.length; i++) {
+      if (arr1[i] !== arr2[i]) {
+          return false;
+      }
+  }
+
+  return true;
+}
 // 1.plugin can be a daemon/HTTP/Websocket service for off-chain processing
 class AtithiAPIPlugin extends BasePlugin {
   _server = undefined;
@@ -80,6 +93,32 @@ class AtithiAPIPlugin extends BasePlugin {
           }
         }
         res.json({ data });
+      });
+
+      this._app.get(`/api/atithi_hotel_tokens/:hotelid/allUsers`, async (_req, res) => {
+        const nftTokens = await this._channel.invoke("atithi:getAllTokens");
+        const hotelid = _req.params.hotelid;
+        const {hotels,...rest}=nftTokens
+        const allUsers=nftTokens.users
+        let data=[]
+        const id=Buffer.from(hotelid, 'hex')
+        // for(let i=0;i<cities.length;i++){
+        //   data.push({"id":cities[i].id,"name":cities[i].name,"state":cities[i].state,"country":cities[i].country})
+        // }
+        if (Array.isArray(hotels)) {
+          for (let i = 0; i < hotels.length; i++) {
+            console.log('ye loop hotel id',hotels[i].id)
+            if (hotelid==hotels[i].id){
+              data=hotels[i].users
+              break
+            }
+            
+          }
+        }
+        let allUsersDetails=allUsers.filter(item => data.includes(item.awn));
+        console.log(allUsersDetails)
+       
+        res.json( {response:allUsersDetails} );
       });
 
     this._app.get("/api/atithi_users_tokens", async (_req, res) => {

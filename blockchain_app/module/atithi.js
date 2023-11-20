@@ -110,7 +110,7 @@ const registeredTokensSchema = {
                                 type: "array",
                                 fieldNumber: 6,
                                 items:{
-                                    dataType:"bytes"
+                                    dataType:"string"
                                 }
                             },
                         },
@@ -273,9 +273,7 @@ const getAllTokens = async (stateStore) => {
       }
       
       if (atithiTokens.hasOwnProperty("users")) {
-        // console.log("users key exists.");
         sortedUsers = atithiTokens.users.sort((a, b) => a.awn.localeCompare(b.awn));
-        
       } else {
         // console.log("users key is missing.");
         sortedUsers=[]
@@ -296,8 +294,6 @@ const getAllTokens = async (stateStore) => {
       }
     };
     
-    // console.log(registeredTokens)
-    // console.log(sortedCities)
     await stateStore.chain.set(
         CHAIN_STATE_ATITHI_TOKENS,
       codec.encode(registeredTokensSchema, registeredTokens)

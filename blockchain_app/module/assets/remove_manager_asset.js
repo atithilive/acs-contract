@@ -50,20 +50,17 @@ class RemoveManagerAsset extends BaseAsset {
         if (!isManager) {
             throw new Error("Not the manager of this hotel");
         }
-        // hotel.manager.splice(asset.managerAddress,1)
-        hotel.manager=[]
+        hotel.managers.splice(asset.managerAddress,1)
+        // hotel.managers=[]
         hotels[hotelTokenIndex]=hotel
         allTokens.hotels=hotels
+        console.log('After removing',hotels)
         await setAllTokens(stateStore,allTokens)
 
         let managerAccount=await stateStore.account.get(asset.managerAddress)
-       
-        console.log('manager account before',managerAccount)
+    
         managerAccount.atithi.generalDetails.hotelId=Buffer.from('')
-        console.log('manager account',managerAccount)
         await stateStore.account.set(asset.managerAddress,managerAccount)
-        console.log('manager account after setting everything')
-
     }
 }
 

@@ -4,8 +4,8 @@ import { transactions, codec, cryptography } from "@liskhq/lisk-client";
 import { getFullAssetSchema} from "../common";
 import { fetchAccountInfo } from "../../api";
 
-export const createUserCheckInSchema = {
-  $id: "lisk/user_checkin_asset",
+export const createUserCheckOutSchema = {
+  $id: "lisk/user_checkout_asset",
   type: "object",
   required: ["awn","hotelId"],
   properties: {
@@ -20,7 +20,7 @@ export const createUserCheckInSchema = {
   },
 };
 
-export const createUserCheckIn = async ({
+export const createUserCheckOut = async ({
   awn,
   hotelId,
   passphrase,
@@ -39,10 +39,10 @@ export const createUserCheckIn = async ({
   const hotelIdBuffer=Buffer.from(hotelId, "hex")
 
   const { id, ...rest } = transactions.signTransaction(
-    createUserCheckInSchema,
+    createUserCheckOutSchema,
     {
       moduleID: 1024,
-      assetID: 7,
+      assetID: 8,
       nonce: BigInt(nonce),
       fee: BigInt(transactions.convertLSKToBeddows("113001")),
       senderPublicKey: publicKey,
@@ -58,7 +58,7 @@ export const createUserCheckIn = async ({
   
   return {
     id: id.toString("hex"),
-    tx: codec.codec.toJSON(getFullAssetSchema(createUserCheckInSchema), rest),
+    tx: codec.codec.toJSON(getFullAssetSchema(createUserCheckOutSchema), rest),
     time:new Date()
   };
 };

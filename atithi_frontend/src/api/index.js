@@ -48,6 +48,15 @@ export const getUserTokens =async()=>{
     });
 }
 
+export const getUserFromHotelTokens =async(hotelId)=>{
+  return fetch(`${url2}/api/atithi_hotel_tokens/${hotelId}/allUsers`)
+  .then((res) => res.json())
+  .then((res) => {
+    console.log(res,'this is res')
+    return res.response;
+  });
+}
+
 export const getHotelsTokens =async()=>{
     return fetch(`${url2}/api/atithi_hotels_tokens`)
     .then((res) => res.json())

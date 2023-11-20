@@ -2,6 +2,19 @@ const { BaseAsset } = require("lisk-sdk");
 const {userCheckInOutAssetSchema}=require("../schemas")
 const {getAllTokens,setAllTokens}=require("../atithi")
 // extend base asset to implement your custom asset
+function compareByteArrays(arr1, arr2) {
+    if (arr1.length !== arr2.length) {
+        return false;
+    }
+
+    for (let i = 0; i < arr1.length; i++) {
+        if (arr1[i] !== arr2[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
 class UserCheckInAsset extends BaseAsset { 
     name = "userCheckIn";
     id = 7;
@@ -17,7 +30,7 @@ class UserCheckInAsset extends BaseAsset {
             throw new Error("Hotel id not found");
           }
 
-        const userTokenIndex = allTokens.user.findIndex((t) => t.awn.equals(asset.awn));
+        const userTokenIndex = allTokens.users.findIndex((t) => t.awn == asset.awn);
           if (userTokenIndex < 0) {
               throw new Error("user id not found");
             }
@@ -28,14 +41,22 @@ class UserCheckInAsset extends BaseAsset {
         if (user.status=="active"){
             throw new Error("cant checkin as  the user is already checkedin to a hotel")
         }
-        if(!hotel.managers.includes(senderAddress)){
+        // if(!hotel.managers.includes(senderAddress)){
+        //     throw new Error("Not authorised")
+        // }
+        const hotelManagers=hotel.managers
+        for (let i = 0; i < hotelManagers.length; i++){
+            if(compareByteArrays(hotel.managers[i],senderAddress)){
+                
+                break
+            }
             throw new Error("Not authorised")
         }
         
         user.status="active"
         user.hotelId=asset.hotelId
         hotel.users.push(asset.awn)
-        hotels[hotelIndex]=hotel
+        hotels[hotelTokenIndex]=hotel
         users[userTokenIndex]=user
         allTokens.users=users
         allTokens.hotels=hotels

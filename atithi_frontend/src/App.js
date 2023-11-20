@@ -26,6 +26,7 @@ import LocalAtmIcon from '@mui/icons-material/LocalAtm';
 import GuestUser from "./components/GuestUser";
 import TransferFundsDialog from "./components/dialogs/TransferFundsDialog";
 import UserCheckIn from "./components/UserCheckIn";
+import SingleHotel from "./components/SingleHotel";
 function App(){
 
   const [openSpeedDial, setOpenSpeedDial] = useState(false);
@@ -71,6 +72,7 @@ function App(){
         <Route path="/cities" element={ <Cities/> } />
         <Route path="/hotels" element={ <Hotels/> } />
         <Route path="/cityHotel/:cityId" element={ <CityHotel/> } />
+        <Route path="/cityHotel/:cityId/:hotelId" element={ <SingleHotel/> } />
         <Route path="/guestUser" element={ <GuestUser/> } />
         <Route path="/guest/checkin" element={ <UserCheckIn/> } />
         {/* <Route path="/contact" element={ <Contact/> } /> */}

@@ -15,13 +15,26 @@ import TextField from '@mui/material/TextField';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import Snackbar from '@mui/material/Snackbar';
+import CloseIcon from '@mui/icons-material/Close';
+
 function SingleHotel(props) {
     let location = useLocation();
     let navigate = useNavigate();
-    const allUsers=(location.state.users);
+    let hotelIdFromCityHotel;
+  let cityIdFromCityHotel;
+
+    try {
+      hotelIdFromCityHotel=(location.state.hotelId);
+      cityIdFromCityHotel=(location.state.cityId);
+      
+    } catch (error) {
+      ;
+    }
     const [managerPasscode,setManagerPasscode]=useState()
     const [awn,setAwn]=useState()
     const [open, setOpen] = useState(false)
+    const [openCheckOut, setOpenCheckOut] = useState(false);
 
     const handleChange = (event) => {
         setManagerPasscode( event.target.value );
@@ -41,7 +54,7 @@ function SingleHotel(props) {
         async function fetchData() {
           try {
             // setUserTokens(await getUserFromHotelTokens());
-            let a=await getUserFromHotelTokens(allUsers);
+            let a=await getUserFromHotelTokens(hotelIdFromCityHotel);
             setUserTokens(a)
             console.log(a)
           } catch (error) {
@@ -57,18 +70,47 @@ function SingleHotel(props) {
       async function checkoutButton(){
         const res = await createUserCheckOut({
             awn:awn,
-            hotelId:allUsers[0],
+            hotelId:hotelIdFromCityHotel[0],
             passphrase:managerPasscode,
             networkIdentifier: nodeInfo.networkIdentifier
             });
-        await api.sendTransactions(res.tx);
-        setOpen(true);
+          try {
+            await api.sendTransactions(res.tx);
+            setOpen(false);
+            window.location.reload()
+            
+          } catch (error) {
+            setOpenCheckOut(true)
+          }
       }
+
+      const handleCloseCheckout = (event, reason) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+    
+        setOpenCheckOut(false);
+      };
+
+      const action = (
+        <React.Fragment>
+          <IconButton
+            size="small"
+            aria-label="close"
+            color="inherit"
+            onClick={handleCloseCheckout}
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        </React.Fragment>
+      );
+
   return (
     <div className='singleHotelContainer'>
         <div className='singleHotelContainerTop'>
-<IconButton onClick={()=>navigate('/guest/checkin')}>
-        <AddIcon/>
+<IconButton onClick={()=>navigate('/guest/checkin', { state: {'cityId':[cityIdFromCityHotel] } })}>
+        
+        <Button variant="contained"><AddIcon/> Check In</Button>
         </IconButton>
         </div>
         
@@ -87,7 +129,7 @@ function SingleHotel(props) {
                 <td className='singleHoteltd'>{val.awn}</td>
                 <td className='singleHoteltd'>{val.email}</td>
                 <td className='singleHoteltd'>{val.mobileNumber}</td>
-                <Button variant="contained" onClick={()=>handleSubmit(val.awn)}>Check out</Button>
+                <td><Button variant="contained" onClick={()=>handleSubmit(val.awn)}>Check out</Button></td>
             </tr>
         ))
     ) : (
@@ -127,6 +169,13 @@ function SingleHotel(props) {
           </Button>
         </DialogActions>
       </Dialog>
+      <Snackbar
+            open={openCheckOut}
+            autoHideDuration={6000}
+            onClose={handleCloseCheckout}
+            message="Something went wrong"
+            action={action}
+      />
         </div>
   )
 }

@@ -122,7 +122,7 @@ hotelTokens[cityId].map((item)=>{
   </IconButton>
   </div>
       {/* <Button onClick={()=>handleTableRowClick(item.id,item.users)}> */}
-      <Button onClick={()=>navigate(`/cityHotel/${cityId}/${item.id}`, { state: { 'users': [item.id] } })}>
+      <Button onClick={()=>navigate(`/cityHotel/${cityId}/${item.id}`, { state: { 'hotelId': [item.id],'cityId':[cityId] } })}>
         Show More
       </Button>
     </CardContent>
